@@ -1,6 +1,8 @@
 'use client'
 
 import dynamic from 'next/dynamic'
+import EditModeProvider from '@/components/edit-mode-provider'
+import EditToolbar from '@/components/edit-toolbar'
 
 // Dynamically import AuthProvider with SSR disabled to prevent hydration errors
 const ClientAuthProvider = dynamic(() => import('@/components/client-auth-provider'), {
@@ -18,7 +20,10 @@ const ClientAuthProvider = dynamic(() => import('@/components/client-auth-provid
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   return (
     <ClientAuthProvider>
-      {children}
+      <EditModeProvider>
+        {children}
+        <EditToolbar />
+      </EditModeProvider>
     </ClientAuthProvider>
   )
 }

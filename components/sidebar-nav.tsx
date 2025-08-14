@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/auth-context'
 import { Button } from "@/components/ui/button"
+import SiteLogo from '@/components/site-logo'
 import { 
   Users, 
   BookOpen, 
@@ -121,9 +122,7 @@ export default function SidebarNav() {
       {/* Header */}
       <div className="p-4 border-b border-green-600">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-            <GraduationCap className="h-6 w-6 text-green-700" />
-          </div>
+          <SiteLogo size={40} className="w-10 h-10" />
           <div>
             <h2 className="text-lg font-bold text-white">Mount Zion</h2>
             <p className="text-xs text-green-200">Admin Panel</p>

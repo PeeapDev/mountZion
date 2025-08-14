@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge"
 import { Church, Calendar, Clock, MapPin, Phone, Heart, Users, Music, BookOpen } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
+import SiteLogo from "@/components/site-logo"
 
 export default function ChapelPage() {
   const services = [
@@ -62,13 +63,7 @@ export default function ChapelPage() {
       <header className="bg-amber-50 border-b border-amber-200 sticky top-0 z-50">
         <div className="container mx-auto px-4 lg:px-6 h-16 flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <Image
-              src="/images/mount-zion-logo.png"
-              alt="Mount Zion Training Centre Logo"
-              width={48}
-              height={48}
-              className="object-contain"
-            />
+            <SiteLogo size={48} className="w-12 h-12" />
             <div>
               <h1 className="text-xl font-bold text-amber-900">Mount Zion Training Centre</h1>
               <p className="text-xs text-amber-700">Leadership Development • Community Training • West Africa</p>
@@ -375,13 +370,7 @@ export default function ChapelPage() {
         <div className="container mx-auto px-4 lg:px-6 py-8">
           <div className="text-center">
             <div className="flex items-center justify-center space-x-3 mb-4">
-              <Image
-                src="/images/mount-zion-logo.png"
-                alt="Mount Zion Training Centre Logo"
-                width={40}
-                height={40}
-                className="object-contain brightness-0 invert"
-              />
+              <SiteLogo size={40} className="w-10 h-10 brightness-0 invert" />
               <div>
                 <h3 className="text-xl font-bold">Mount Zion Training Centre</h3>
                 <p className="text-sm text-amber-300">Chapel Services</p>

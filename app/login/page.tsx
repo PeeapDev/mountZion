@@ -10,7 +10,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { LogIn, Church } from "lucide-react"
+import { LogIn } from "lucide-react"
+import SiteLogo from "@/components/site-logo"
 import Link from "next/link"
 
 function LoginForm() {
@@ -54,9 +55,7 @@ function LoginForm() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex items-center justify-center mb-4">
-            <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center">
-              <Church className="h-8 w-8 text-white" />
-            </div>
+            <SiteLogo size={64} className="w-16 h-16" />
           </div>
           <CardTitle className="text-2xl text-green-900">Welcome Back</CardTitle>
           <CardDescription className="text-gray-600">

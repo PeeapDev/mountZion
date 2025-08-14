@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/auth-context'
+import { supabase } from '@/lib/supabase/client'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -62,6 +63,7 @@ export default function GeneralSettingsPage() {
   const router = useRouter()
   const [isSaving, setIsSaving] = useState(false)
   const [lastSaved, setLastSaved] = useState<Date | null>(null)
+  const [logoUploading, setLogoUploading] = useState(false)
 
   // Form state
   const [settings, setSettings] = useState({
@@ -134,6 +136,13 @@ export default function GeneralSettingsPage() {
     if (!isLoading && user && user.role !== 'admin') {
       router.push('/user-dashboard')
     }
+    // Initialize logo from localStorage if present
+    if (typeof window !== 'undefined') {
+      const storedLogo = localStorage.getItem('siteLogoUrl')
+      if (storedLogo) {
+        setSettings(prev => ({ ...prev, logoUrl: storedLogo }))
+      }
+    }
   }, [user, isLoading, router])
 
   if (isLoading) {
@@ -164,6 +173,37 @@ export default function GeneralSettingsPage() {
       ...prev,
       [field]: value
     }))
+  }
+
+  const handleLogoUpload = async (file: File) => {
+    if (!file) return
+    // Validate type and size
+    if (!file.type.startsWith('image/')) {
+      alert('Please select a valid image file (PNG/JPG/SVG).')
+      return
+    }
+    const maxBytes = Number(settings.fileUploadLimit || 10) * 1024 * 1024
+    if (file.size > maxBytes) {
+      alert(`File too large. Max ${settings.fileUploadLimit}MB allowed.`)
+      return
+    }
+    try {
+      setLogoUploading(true)
+      // Temporarily bypass remote upload. Use a local object URL for preview only.
+      const localUrl = URL.createObjectURL(file)
+      handleInputChange('logoUrl', localUrl)
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('siteLogoUrl', localUrl)
+        window.dispatchEvent(new CustomEvent('site-logo-updated', { detail: localUrl }))
+      }
+      // Note: This is not persisted. Replace with API call when Supabase is ready.
+      return
+    } catch (err) {
+      console.error('Logo upload failed:', err)
+      alert('Logo upload failed. Please try again.')
+    } finally {
+      setLogoUploading(false)
+    }
   }
 
   return (
@@ -304,6 +344,65 @@ export default function GeneralSettingsPage() {
                         onChange={(e) => handleInputChange('fax', e.target.value)}
                         className="text-xs h-8 mt-1"
                       />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* Branding */}
+            <motion.div variants={itemVariants}>
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <Image className="h-4 w-4" />
+                    Branding
+                  </CardTitle>
+                  <CardDescription className="text-xs">Upload your organization logo</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    <div className="h-14 w-14 rounded border bg-white flex items-center justify-center overflow-hidden">
+                      {settings.logoUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={settings.logoUrl} alt="Logo preview" className="h-full w-full object-contain" />
+                      ) : (
+                        <span className="text-[10px] text-gray-400">No Logo</span>
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <Label htmlFor="logo" className="text-xs font-medium">Logo Image</Label>
+                      <div className="mt-1 flex items-center gap-2">
+                        <Input
+                          id="logo"
+                          type="file"
+                          accept="image/*"
+                          className="text-xs h-8"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0]
+                            if (file) handleLogoUpload(file)
+                          }}
+                        />
+                        <Button
+                          type="button"
+                          className="bg-green-600 hover:bg-green-700 text-xs"
+                          disabled={logoUploading}
+                          onClick={() => document.getElementById('logo')?.click()}
+                        >
+                          {logoUploading ? (
+                            <>
+                              <RefreshCw className="mr-1 h-3 w-3 animate-spin" />
+                              Uploading...
+                            </>
+                          ) : (
+                            <>
+                              <Upload className="mr-1 h-3 w-3" />
+                              Upload Logo
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                      <p className="text-[10px] text-gray-500 mt-1">PNG or JPG up to {settings.fileUploadLimit}MB.</p>
                     </div>
                   </div>
                 </CardContent>
