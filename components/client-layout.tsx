@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic'
 import EditModeProvider from '@/components/edit-mode-provider'
 import EditToolbar from '@/components/edit-toolbar'
+import { usePathname } from 'next/navigation'
 
 // Dynamically import AuthProvider with SSR disabled to prevent hydration errors
 const ClientAuthProvider = dynamic(() => import('@/components/client-auth-provider'), {
@@ -18,11 +19,12 @@ const ClientAuthProvider = dynamic(() => import('@/components/client-auth-provid
 })
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname()
   return (
     <ClientAuthProvider>
       <EditModeProvider>
         {children}
-        <EditToolbar />
+        {pathname === '/' && <EditToolbar />}
       </EditModeProvider>
     </ClientAuthProvider>
   )
